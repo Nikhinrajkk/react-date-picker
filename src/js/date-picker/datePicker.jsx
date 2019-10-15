@@ -18,22 +18,6 @@ const monthArray = [
   'December'
 ];
 
-const monthArrayShort = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec'
-];
-
-
 class DatePicker extends Component {
   constructor(props) {
     super(props);
@@ -96,10 +80,9 @@ class DatePicker extends Component {
   onMonthSelect = (evt) => {
     const { selectedDay, selectedYear } = this.state;
     const month = evt.target.innerText;
-    const monthIndex = monthArrayShort.findIndex(item => item === month);
-
+    const monthIndex = monthArray.findIndex(item => item.includes(month));
     this.setState({
-      selectedMonth: month,
+      selectedMonth: monthIndex,
       selectedDate: `${selectedDay}/${monthIndex + 1}/${selectedYear}`,
       showMonthPicker: false,
       showDatePicker: true

@@ -1,1 +1,1 @@
-# react-date-picker
+# react-custom-date-selector
