@@ -48,6 +48,16 @@ class MyApp extends Component {
   }
 }
 ```
+### Props
+
+|Prop name|Description|Default value|Example values|
+|----|----|----|----|
+|input|To change selector `Button` to `Input`|`false`|`true`|
+|color|To change color of the selected `day` / `month` / `year`|`#1CA6D9`|`#32A852`|
+|selectorStyle|To change the selector `Button / Input` style|`{}`|`{ border: '1px solid gray' }`|
+|iconURL|To add `icon` to selector `Button`|`n/a`|`"assets/calander.svg"`|
+|iconPosition|To change icon's `position`|`right`|`left`|
+
 
 ## License
 
