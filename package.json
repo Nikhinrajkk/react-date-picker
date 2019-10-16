@@ -1,12 +1,15 @@
 {
   "name": "react-custom-date-selector",
-  "version": "1.0.5",
+  "version": "1.0.8",
   "description": "React custom date picker component",
   "main": "dist/index.js",
   "scripts": {
     "serve": "webpack-dev-server --mode development",
     "transpile": "babel src/js/date-picker -d dist --copy-files",
-    "prepublishOnly": "npm run transpile"
+    "prepublishOnly": "npm run transpile",
+    "build": "webpack --mode production",
+    "deploy": "gh-pages -d dist",
+    "publish-demo": "npm run build && npm run deploy"
   },
   "repository": {
     "type": "git",
