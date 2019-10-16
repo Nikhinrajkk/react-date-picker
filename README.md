@@ -6,6 +6,9 @@ A date selector component for your React app.
 * No dependencies needed
 * Can customize the styles
 
+![calander](https://user-images.githubusercontent.com/22662965/66898189-4d662f80-f016-11e9-837e-ee5f4bf9a9a9.png)
+
+
 ## Installation
 
 This package can be installed via [npm](https://github.com/npm/cli):
