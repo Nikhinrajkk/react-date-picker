@@ -90,10 +90,10 @@
   height: 24px;
   margin-top: 8px;
   font-weight: 600;
-  display: table;
+  display: flex;
 }
 
-.date-picker-popup tr td {
+.week-name-wrapper div {
   padding: 0;
   border: none;
   width: 30px;

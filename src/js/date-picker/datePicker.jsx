@@ -69,12 +69,14 @@ class DatePicker extends Component {
   onDateSelect = (evt) => {
     const { selectedMonth, selectedYear } = this.state;
     const day = parseInt(evt.target.innerText, 10);
+    const date = `${day}/${selectedMonth + 1}/${selectedYear}`;
 
     this.setState({
       selectedDay: day,
-      selectedDate: `${day}/${selectedMonth + 1}/${selectedYear}`
+      selectedDate: date
     })
     this.hidePopup();
+    this.props.onDateSelect && this.props.onDateSelect(date);
   };
 
   onMonthSelect = (evt) => {
@@ -223,24 +225,23 @@ class DatePicker extends Component {
                   && (
                     <div>
                       <div className="week-name-wrapper">
-                        <tr>
-                          <td>Su</td>
-                          <td>Mo</td>
-                          <td>Tu</td>
-                          <td>We</td>
-                          <td>Th</td>
-                          <td>Fr</td>
-                          <td>Sa</td>
-                        </tr>
+                        <div>Su</div>
+                        <div>Mo</div>
+                        <div>Tu</div>
+                        <div>We</div>
+                        <div>Th</div>
+                        <div>Fr</div>
+                        <div>Sa</div>
                       </div>
                       <div className="date-wrapper">
-                        {dateArray.map(date => (
+                        {dateArray.map((date, index) => (
                           <div
                             onClick={evt => this.onDateSelect(evt)}
                             role="presentation"
                             className={date !== null
                               ? `date-item ${date === selectedDay
                               && 'selected-date-item'}` : 'date-space'}
+                              key={`${index}-${date}`}
                           >
                             {date}
                           </div>
@@ -256,6 +257,7 @@ class DatePicker extends Component {
                           onClick={evt => this.onMonthSelect(evt)}
                           role="presentation"
                           className={`month-item ${index === selectedMonth && 'selected-date-item'}`}
+                          key={month}
                         >
                           {month.substring(0, 3)}
                         </div>
@@ -269,6 +271,7 @@ class DatePicker extends Component {
                         <div
                           onClick={evt => this.onYearSelect(evt)}
                           role="presentation"
+                          key={year}
                           className={`year-item ${year === selectedYear && 'selected-date-item'}`}
                         >
                           {year}
