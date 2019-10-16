@@ -35,10 +35,14 @@ import React, { Component } from 'react';
 import DatePicker from 'react-custom-date-selector';
 
 class MyApp extends Component {
+  onDateSelect = (selectedDate) => {
+    console.log(selectedDate);
+  }
+
   render() {
     return (
       <div>
-        <DatePicker />
+        <DatePicker onDateSelect={this.onDateSelect}/>
       </div>
     );
   }
