@@ -49,4 +49,18 @@ class MyApp extends Component {
 
 The MIT License.
 
+## Author
+
+<table>
+  <tr>
+    <td>
+      <img src="https://user-images.githubusercontent.com/22662965/66898950-c3b76180-f017-11e9-86e6-2634ca04bab5.jpg" width="100">
+    </td>
+    <td>
+      Nikhin Raj<br />
+      <a href="mailto:nikhinrajkk@gmail.com">nikhinrajkk@gmail.com</a><br />
+    </td>
+  </tr>
+</table>
+
 ## Thank You !
