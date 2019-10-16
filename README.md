@@ -1,6 +1,6 @@
 # react-custom-date-selector
 
-A date selector component for your React app.
+A date selector component for your React app ([Demo](https://nikhinrajkk.github.io/react-date-picker/))
 
 * Select Day, Month and Year
 * No dependencies needed
