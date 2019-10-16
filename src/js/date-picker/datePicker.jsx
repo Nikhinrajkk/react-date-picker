@@ -57,11 +57,12 @@ class DatePicker extends Component {
   daysInMonth = (month, year) => 32 - new Date(year, month, 32).getDate();
 
   hidePopup = () => {
+    const { showPopup } = this.state;
     this.setState({
-      showPopup: !this.state.showPopup,
+      showPopup: !showPopup,
       showDatePicker: true,
       showMonthPicker: false,
-      showYearPicker: false,
+      showYearPicker: false
     });
   };
 
@@ -74,9 +75,11 @@ class DatePicker extends Component {
     this.setState({
       selectedDay: day,
       selectedDate: date
-    })
+    });
     this.hidePopup();
-    this.props.onDateSelect && this.props.onDateSelect(date);
+    if (this.props.onDateSelect) {
+      this.props.onDateSelect(date);
+    }
   };
 
   onMonthSelect = (evt) => {
@@ -88,7 +91,7 @@ class DatePicker extends Component {
       selectedDate: `${selectedDay}/${monthIndex + 1}/${selectedYear}`,
       showMonthPicker: false,
       showDatePicker: true
-    })
+    });
   };
 
   onYearSelect = (evt) => {
@@ -100,7 +103,7 @@ class DatePicker extends Component {
       selectedDate: `${selectedDay}/${selectedMonth + 1}/${year}`,
       showYearPicker: false,
       showDatePicker: true
-    })
+    });
   };
 
   onPrevMonthClick = () => {
@@ -117,7 +120,7 @@ class DatePicker extends Component {
     this.setState({
       selectedYear: year,
       selectedMonth: month
-    })
+    });
   };
 
   onNextMonthClick = () => {
@@ -134,7 +137,7 @@ class DatePicker extends Component {
     this.setState({
       selectedYear: year,
       selectedMonth: month
-    })
+    });
   };
 
   onMonthPickerSelect = () => {
@@ -142,7 +145,7 @@ class DatePicker extends Component {
       showYearPicker: false,
       showMonthPicker: true,
       showDatePicker: false
-    })
+    });
   };
 
   onYearPickerSelect = () => {
@@ -150,8 +153,20 @@ class DatePicker extends Component {
       showYearPicker: true,
       showMonthPicker: false,
       showDatePicker: false
-    })
+    });
   };
+
+  getSelectionStyles = (selection, defaultSelection) => {
+    const { color } = this.props;
+
+    if (selection === defaultSelection) {
+      if (color) {
+        return { backgroundColor: color, color: 'white' };
+      }
+      return { backgroundColor: '#1ca6d9', color: 'white' };
+    }
+    return {};
+  }
 
   render() {
     const {
@@ -165,6 +180,13 @@ class DatePicker extends Component {
       showPopup
     } = this.state;
 
+    const {
+      iconURL,
+      selectorStyle = {},
+      input = false,
+      iconPosition = 'right'
+    } = this.props;
+
     const monthDays = this.daysInMonth(selectedMonth, selectedYear);
     const startDay = new Date(`${selectedMonth + 1}/1/${selectedYear}`).getDay();
     let dateArray = [];
@@ -175,16 +197,37 @@ class DatePicker extends Component {
 
     const yearArray = Array.from(Array(12), (year = selectedYear - 5, i) => year + i);
 
+    const iconPositionStyle = iconPosition === 'left' ? { flexDirection: 'row-reverse' } : {};
+    const iconStyle = iconPosition === 'left' ? { marginLeft: 0, marginRight: 5 } : {};
 
     return (
-      <div className="date-picker-wrapper">
-        <div
-          className="date-picker-selector"
-          onClick={() => this.hidePopup()}
-          role="presentation"
-        >
-          {selectedDate}
-        </div>
+      <div
+        className="date-picker-wrapper"
+      >
+        {input
+          ? (
+            <input
+              type="text"
+              value={selectedDate}
+              onClick={() => this.hidePopup()}
+              style={selectorStyle}
+              className="date-picker-selector"
+            />)
+          : (
+            <div
+              className="date-picker-selector"
+              style={{ cursor: 'pointer', ...selectorStyle, ...iconPositionStyle }}
+              onClick={() => this.hidePopup()}
+              role="presentation"
+            >
+              {selectedDate}
+              {iconURL
+                && (
+                  <img src={this.props.iconURL} alt="icon" style={iconStyle} />
+                )}
+            </div>)
+        }
+
         {showPopup
           && (
             <div>
@@ -234,16 +277,16 @@ class DatePicker extends Component {
                         <div>Sa</div>
                       </div>
                       <div className="date-wrapper">
-                        {dateArray.map((date, index) => (
+                        {dateArray.map((day, index) => (
                           <div
                             onClick={evt => this.onDateSelect(evt)}
                             role="presentation"
-                            className={date !== null
-                              ? `date-item ${date === selectedDay
-                              && 'selected-date-item'}` : 'date-space'}
-                              key={`${index}-${date}`}
+                            key={`${index}-${day}`}
+                            className={day !== null
+                              ? `date-item` : 'date-space'}
+                            style={day !== null ? this.getSelectionStyles(day, selectedDay) : {}}
                           >
-                            {date}
+                            {day}
                           </div>
                         ))}
                       </div>
@@ -256,8 +299,9 @@ class DatePicker extends Component {
                         <div
                           onClick={evt => this.onMonthSelect(evt)}
                           role="presentation"
-                          className={`month-item ${index === selectedMonth && 'selected-date-item'}`}
                           key={month}
+                          className="month-item"
+                          style={this.getSelectionStyles(index, selectedMonth)}
                         >
                           {month.substring(0, 3)}
                         </div>
@@ -272,7 +316,8 @@ class DatePicker extends Component {
                           onClick={evt => this.onYearSelect(evt)}
                           role="presentation"
                           key={year}
-                          className={`year-item ${year === selectedYear && 'selected-date-item'}`}
+                          className="year-item"
+                          style={this.getSelectionStyles(year, selectedYear)}
                         >
                           {year}
                         </div>
@@ -283,9 +328,9 @@ class DatePicker extends Component {
             </div>
           )}
       </div>
-    )
+    );
   }
-};
+}
 
 DatePicker.propTypes = {
   defaultDate: PropTypes.string

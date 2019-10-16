@@ -1,20 +1,22 @@
 .date-picker-wrapper {
-  border: 1px solid #ccc;
   position: relative;
   display: inline-block;
   color: #555555;
 }
 
 .date-picker-selector {
-  cursor: pointer;
+  width: 130px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  border: 1px solid #ccc;
   padding: 8px 12px;
   box-sizing: border-box;
+  outline: none;
 }
 
 .date-picker-wrapper  img {
-  margin-left: 10px;
+  margin-left: 8px;
   height: 17px;
   width: 17px;
   position: relative;
@@ -122,7 +124,7 @@
 }
 
 .date-item:hover {
-  background-color: #1ca6d926;
+  background-color: #E1E1E1;
 }
 
 .month-item {
@@ -139,7 +141,7 @@
 }
 
 .month-item:hover {
-  background-color: #1ca6d926;
+  background-color: #E1E1E1;
 }
 
 .year-item {
@@ -156,12 +158,7 @@
 }
 
 .year-item:hover {
-  background-color: #1ca6d926;
-}
-
-.selected-date-item {
-  background-color: #1ca6d9;
-  color: white;
+  background-color: #E1E1E1;
 }
 
 .selected-date-item:hover {
@@ -171,11 +168,6 @@
 .date-space {
   width: 30px;
   height: 30px;
-}
-
-.date-wrapper div:active {
-  background-color: #1ca6d9;
-  color: white;
 }
 
 .month-wrapper {
