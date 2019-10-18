@@ -4,7 +4,7 @@ import DatePicker from './js/date-picker';
 
 import './styles.css';
 
-const renderDatePickerExample = (title, input, color, iconURL, iconPosition, selectorStyle) => {
+const renderDatePickerExample = (title, date, input, color, iconURL, iconPosition, selectorStyle) => {
   const style = {
     backgroundColor: 'gray',
     color: 'white',
@@ -20,6 +20,7 @@ const renderDatePickerExample = (title, input, color, iconURL, iconPosition, sel
         <div className="example-content">
           <div>{`<DatePicker`}</div>
           <div className="code-param">{`onDateSelect={() => { }}`}</div>
+          {date && <div className="code-param">{`date="${date}"`}</div>}
           {input && <div className="code-param">{`input={true}`}</div>}
           {color && <div className="code-param">{`color="#32A852"`}</div>}
           {iconURL && <div className="code-param">{`iconURL="assets/calendar.svg"`}</div>}
@@ -35,6 +36,9 @@ const renderDatePickerExample = (title, input, color, iconURL, iconPosition, sel
       <div className="dp-example-wrapper">
         <DatePicker
           input={input}
+          monthSelector={true}
+          date={date ? date : null}
+          seperator="-"
           color={color ? color : '#1CA6D9'}
           iconURL={iconURL ? "assets/calendar.svg" : ''}
           iconPosition={iconPosition ? "left" : "right"}
@@ -83,12 +87,13 @@ class MyApp extends Component {
           <div className="title">
             Examples
           </div>
-          {renderDatePickerExample("Default")}
-          {renderDatePickerExample("With input selector", true)}
-          {renderDatePickerExample("With custom color", false, '#32A852')}
-          {renderDatePickerExample("With custom icon", false, false, true)}
-          {renderDatePickerExample("With icon at lrft position", false, false, true, "left")}
-          {renderDatePickerExample("With custom styles for Button / Input selector", false, false, false, false, true)}
+          {renderDatePickerExample("Default (Current date)")}
+          {renderDatePickerExample("With custom date as props", '15/8/2019')}
+          {renderDatePickerExample("With input selector", false, true)}
+          {renderDatePickerExample("With custom color", false, false, '#32A852')}
+          {renderDatePickerExample("With custom icon", false, false, false, true)}
+          {renderDatePickerExample("With icon at lrft position", false, false, false, true, "left")}
+          {renderDatePickerExample("With custom styles for Button / Input selector", false, false, false, false, false, true)}
         </div>
 
       </div >

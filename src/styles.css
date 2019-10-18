@@ -14,11 +14,11 @@ body {
   display: flex;
   padding-left: 30px;
   font-size: 28px;
-  padding: 0 20%;
+  padding: 0 28%;
 }
 
 .sub-header {
-  padding: 100px 20% 25px 20%;
+  padding: 100px 25% 25px 28%;
   font-size: 44px;
   height: 180px;
   background-color: #3a67b0;
@@ -31,8 +31,6 @@ body {
   font-size: 18px;
   display: flex;
   align-items: center;
-  width: 110px;
-  justify-content: space-between;
   cursor: pointer;
 }
 
@@ -47,8 +45,12 @@ a {
   text-decoration-color: white;
 }
 
+a span {
+  margin-left: 10px;
+}
+
 .date-picker-body {
-  margin: 0 20%;
+  margin: 0 28%;
 }
 
 .title {
@@ -72,8 +74,7 @@ a {
 }
 
 .example-wrapper {
-  margin: 20px 0;
-  height: 300px;
+  margin: 25px 0;
   width: 100%;
   border: 1px solid #ccc;
   display: flex;
@@ -84,7 +85,6 @@ a {
 }
 
 .example-body {
-  height: 100%;
   width: 65%;
   border-right: 1px solid #ccc;
 }
@@ -95,14 +95,13 @@ a {
 
 .example-header {
   border-bottom: 1px solid #ccc;
-  padding: 18px 20px;
-  font-size: 20px;
+  padding: 12px 15px;
+  font-size: 18px;
 }
 
 .example-content {
   padding: 20px;
-  height: 200px;
-  font-size: 20px;
+  font-size: 18px;
   background-color: aliceblue;
 }
 
@@ -117,6 +116,6 @@ a {
 .dp-example-wrapper {
   display: flex;
   justify-content: center;
+  align-items: center;
   width: 35%;
-  padding-top: 80px;
 }
