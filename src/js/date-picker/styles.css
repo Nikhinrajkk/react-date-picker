@@ -5,7 +5,8 @@
 }
 
 .date-picker-selector {
-  max-width: 150px;
+  max-width: 175px;
+  min-width: 130px;
   display: flex;
   align-items: center;
   justify-content: center;

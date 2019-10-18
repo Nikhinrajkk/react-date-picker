@@ -4,7 +4,7 @@ import DatePicker from './js/date-picker';
 
 import './styles.css';
 
-const renderDatePickerExample = (title, date, input, color, iconURL, iconPosition, selectorStyle) => {
+const renderDatePickerExample = (title, date, seperator, format, input, monthPicker, color, iconURL, iconPosition, selectorStyle) => {
   const style = {
     backgroundColor: 'gray',
     color: 'white',
@@ -22,6 +22,9 @@ const renderDatePickerExample = (title, date, input, color, iconURL, iconPositio
           <div className="code-param">{`onDateSelect={() => { }}`}</div>
           {date && <div className="code-param">{`date="${date}"`}</div>}
           {input && <div className="code-param">{`input={true}`}</div>}
+          {monthPicker && <div className="code-param">{`monthSelector={true}`}</div>}
+          {format && <div className="code-param">{`dateFormat="DDmonYYYY"`}</div>}
+          {seperator && <div className="code-param">{`seperator="-"`}</div>}
           {color && <div className="code-param">{`color="#32A852"`}</div>}
           {iconURL && <div className="code-param">{`iconURL="assets/calendar.svg"`}</div>}
           {iconPosition && <div className="code-param">{`iconPosition="left"`}</div>}
@@ -36,9 +39,10 @@ const renderDatePickerExample = (title, date, input, color, iconURL, iconPositio
       <div className="dp-example-wrapper">
         <DatePicker
           input={input}
-          monthSelector={true}
           date={date ? date : null}
-          seperator="-"
+          dateFormat={format ? format : "DDMMYYYY"}
+          monthSelector={monthPicker}
+          seperator={seperator ? "-" : "/"}
           color={color ? color : '#1CA6D9'}
           iconURL={iconURL ? "assets/calendar.svg" : ''}
           iconPosition={iconPosition ? "left" : "right"}
@@ -89,11 +93,14 @@ class MyApp extends Component {
           </div>
           {renderDatePickerExample("Default (Current date)")}
           {renderDatePickerExample("With custom date as props", '15/8/2019')}
-          {renderDatePickerExample("With input selector", false, true)}
-          {renderDatePickerExample("With custom color", false, false, '#32A852')}
-          {renderDatePickerExample("With custom icon", false, false, false, true)}
-          {renderDatePickerExample("With icon at lrft position", false, false, false, true, "left")}
-          {renderDatePickerExample("With custom styles for Button / Input selector", false, false, false, false, false, true)}
+          {renderDatePickerExample("With custom seperator", false, true)}
+          {renderDatePickerExample("With custom date format", false, true, 'DDMonYYYY')}
+          {renderDatePickerExample("With input selector", false, true, false, true)}
+          {renderDatePickerExample("Use as Month Picker", false, true, true, false, true)}
+          {renderDatePickerExample("With custom color", false, false, false, false, false, '#32A852')}
+          {renderDatePickerExample("With custom icon", false, false, false, false, false, false, true)}
+          {renderDatePickerExample("With icon at left position", false, false, false, false, false, false, true, "left")}
+          {renderDatePickerExample("With custom styles for Button / Input selector", false, false, false, false, false, false, false, false, true)}
         </div>
 
       </div >

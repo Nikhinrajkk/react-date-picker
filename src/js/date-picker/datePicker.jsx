@@ -66,12 +66,47 @@ class DatePicker extends Component {
     });
   };
 
+  formatDateDigit = (digit) => digit < 10 ? `0${digit}` : digit;
+
   formatDate = (day, month, year) => {
-    const { seperator, monthSelector } = this.props;
+    const { seperator, monthSelector, dateFormat } = this.props;
     if (monthSelector) {
-      return `${monthArray[month].substring(0, 3)}${seperator}${year}`;
+      switch (dateFormat) {
+        case 'MMYYYY':
+          return `${this.formatDateDigit(month + 1)}${seperator}${year}`;
+        case 'YYYYMM':
+          return `${year}${seperator}${this.formatDateDigit(month + 1)}`;
+        case 'MM':
+          return `${this.formatDateDigit(month + 1)}`;
+        case 'YYYYMon':
+          return `${year}${seperator}${monthArray[month].substring(0, 3)}`;
+        case 'Mon':
+          return monthArray[month].substring(0, 3);
+        case 'Month':
+          return monthArray[month];
+        default:
+          return `${monthArray[month].substring(0, 3)}${seperator}${year}`;
+      }
     }
-    return `${day}${seperator}${month}${seperator}${year}`;
+
+    switch (dateFormat) {
+      case 'DDMonYYYY':
+        return `${this.formatDateDigit(day)}${seperator}${monthArray[month].substring(0, 3)}${seperator}${year}`;
+      case 'YYYYMonDD':
+        return `${year}${seperator}${monthArray[month].substring(0, 3)}${seperator}${this.formatDateDigit(day)}`;
+      case 'DDMonthYYYY':
+        return `${this.formatDateDigit(day)}${seperator}${monthArray[month]}${seperator}${year}`;
+      case 'YYYYMonthDD':
+        return `${year}${seperator}${monthArray[month]}${seperator}${this.formatDateDigit(day)}`;
+      case 'DDMMYY':
+        return `${this.formatDateDigit(day)}${seperator}${this.formatDateDigit(month + 1)}${seperator}${`${year}`.substring(2, 4)}`;
+      case 'YYMMDD':
+        return `${`${year}`.substring(2, 4)}${seperator}${this.formatDateDigit(month + 1)}${seperator}${this.formatDateDigit(day)}`;
+      case 'YYYYMMDD':
+        return `${year}${seperator}${this.formatDateDigit(month + 1)}${seperator}${this.formatDateDigit(day)}`;
+      default:
+        return `${this.formatDateDigit(day)}${seperator}${this.formatDateDigit(month + 1)}${seperator}${year}`;
+    }
   }
 
 
@@ -85,9 +120,7 @@ class DatePicker extends Component {
       selectedDate: date
     });
     this.hidePopup();
-    if (this.props.onDateSelect) {
-      this.props.onDateSelect(this.formatDate(day, selectedMonth + 1, selectedYear));
-    }
+    this.props.onDateSelect(this.formatDate(day, selectedMonth, selectedYear));
   };
 
   onMonthSelect = (evt) => {
@@ -300,7 +333,7 @@ class DatePicker extends Component {
           ? (
             <input
               type="text"
-              value={this.formatDate(selectedDay, selectedMonth + 1, selectedYear)}
+              value={this.formatDate(selectedDay, selectedMonth, selectedYear)}
               onClick={() => this.hidePopup()}
               style={selectorStyle}
               className="date-picker-selector"
@@ -312,7 +345,7 @@ class DatePicker extends Component {
               onClick={() => this.hidePopup()}
               role="presentation"
             >
-              {this.formatDate(selectedDay, selectedMonth + 1, selectedYear)}
+              {this.formatDate(selectedDay, selectedMonth, selectedYear)}
               {iconURL
                 && (
                   <img src={this.props.iconURL} alt="icon" style={iconStyle} />
@@ -368,15 +401,29 @@ class DatePicker extends Component {
 }
 
 DatePicker.propTypes = {
+  onDateSelect: PropTypes.func,
   defaultDate: PropTypes.string,
+  input: PropTypes.bool,
+  iconURL: PropTypes.string,
+  selectorStyle: PropTypes.shape(),
+  iconPosition: PropTypes.string,
   monthSelector: PropTypes.bool,
-  seperator: PropTypes.string
+  monthSelector: PropTypes.bool,
+  seperator: PropTypes.string,
+  dateFormat: PropTypes.string
 };
 
 DatePicker.defaultProps = {
+  onDateSelect: () => { },
   defaultDate: '',
+  input: false,
+  iconURL: null,
+  selectorStyle: {},
+  iconPosition: 'right',
   monthSelector: false,
-  seperator: '/'
+  monthSelector: false,
+  seperator: '/',
+  dateFormat: 'DD/MM/YYYY'
 };
 
 export default DatePicker;
