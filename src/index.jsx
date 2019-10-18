@@ -23,7 +23,7 @@ const renderDatePickerExample = (title, date, seperator, format, input, monthPic
           {date && <div className="code-param">{`date="${date}"`}</div>}
           {input && <div className="code-param">{`input={true}`}</div>}
           {monthPicker && <div className="code-param">{`monthSelector={true}`}</div>}
-          {format && <div className="code-param">{`dateFormat="DDmonYYYY"`}</div>}
+          {format && <div className="code-param">{`dateFormat="${format}"`}</div>}
           {seperator && <div className="code-param">{`seperator="-"`}</div>}
           {color && <div className="code-param">{`color="#32A852"`}</div>}
           {iconURL && <div className="code-param">{`iconURL="assets/calendar.svg"`}</div>}
@@ -96,7 +96,7 @@ class MyApp extends Component {
           {renderDatePickerExample("With custom seperator", false, true)}
           {renderDatePickerExample("With custom date format", false, true, 'DDMonYYYY')}
           {renderDatePickerExample("With input selector", false, true, false, true)}
-          {renderDatePickerExample("Use as Month Picker", false, true, true, false, true)}
+          {renderDatePickerExample("Use as Month Picker", false, true, 'MonYYYY', false, true)}
           {renderDatePickerExample("With custom color", false, false, false, false, false, '#32A852')}
           {renderDatePickerExample("With custom icon", false, false, false, false, false, false, true)}
           {renderDatePickerExample("With icon at left position", false, false, false, false, false, false, true, "left")}
