@@ -58,12 +58,12 @@ class MyApp extends Component {
 |date|To set custom date as prop|`"current date"`|`"15-08-2019"`|
 |dateFormat|To select display `date format`|<ul><li>Date: `"DDMMYYYY"`</li><li>Month: `"MonYYYY"`</li></ul>|For date picker<ul><li>`"YYYYMMDD"`</li><li>`"DDMonYYYY"`</li><li>`"DDMonthYYYY"`</li><li>`"DDMonYYYY"`</li><li>`"YYYYMonthDD"`</li><li>`"DDMMYY"`</li><li>`"YYMMDD"`</li></ul>For month picker<ul><li>`"YYYYMon"`</li><li>`"MMYYYY"`</li><li>`"YYYYMM"`</li><li>`"MM"`</li><li>`"Mon"`</li><li>`"Month"`</li></ul>|
 |input|To change selector `Button` to `Input`|`false`|`true`|
-|seperator|To change selector date seperator|`/`|`-`|
+|seperator|To change selector date seperator|`"/"`|`"-"`|
 |monthSelector|To use as `Month Picker`|`false`|`true`|
-|color|To change color of the selected `day` / `month` / `year`|`#1CA6D9`|`#32A852`|
+|color|To change color of the selected `day` / `month` / `year`|`"#1CA6D9"`|`"#32A852"`|
 |selectorStyle|To change the selector `Button / Input` style|`{}`|`{ border: '1px solid gray' }`|
 |iconURL|To add `icon` to selector `Button`|`n/a`|`"assets/calander.svg"`|
-|iconPosition|To change icon's `position`|`right`|`left`|
+|iconPosition|To change icon's `position`|`"right"`|`"left"`|
 
 
 ## License
