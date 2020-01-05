@@ -156,34 +156,45 @@ class DatePicker extends Component {
     });
   };
 
-  onPrevMonthClick = () => {
-    const { selectedMonth, selectedYear } = this.state;
+  onPrevClick = () => {
+    const { selectedMonth, selectedYear, showYearPicker } = this.state;
     let month = 0;
     let year = selectedYear;
 
-    if (selectedMonth === 0) {
-      month = 11;
-      year = selectedYear - 1;
-    } else {
-      month = selectedMonth - 1;
+    if (showYearPicker) {
+      year -= 1;
     }
+    else {
+      if (selectedMonth === 0) {
+        month = 11;
+        year = selectedYear - 1;
+      } else {
+        month = selectedMonth - 1;
+      }
+    }
+
     this.setState({
       selectedYear: year,
       selectedMonth: month
     });
   };
 
-  onNextMonthClick = () => {
-    const { selectedMonth, selectedYear } = this.state;
+  onNextClick = () => {
+    const { selectedMonth, selectedYear, showYearPicker } = this.state;
     let month = 0;
     let year = selectedYear;
 
-    if (selectedMonth === 11) {
-      month = 0;
-      year = selectedYear + 1;
+    if (showYearPicker) {
+      year += 1;
     } else {
-      month = selectedMonth + 1;
+      if (selectedMonth === 11) {
+        month = 0;
+        year = selectedYear + 1;
+      } else {
+        month = selectedMonth + 1;
+      }
     }
+
     this.setState({
       selectedYear: year,
       selectedMonth: month
@@ -379,12 +390,12 @@ class DatePicker extends Component {
                   <div className="arrow-wrapper">
                     <div
                       className="left-arrow"
-                      onClick={() => this.onPrevMonthClick()}
+                      onClick={() => this.onPrevClick()}
                       role="presentation"
                     />
                     <div
                       className="right-arrow"
-                      onClick={() => this.onNextMonthClick()}
+                      onClick={() => this.onNextClick()}
                       role="presentation"
                     />
                   </div>
