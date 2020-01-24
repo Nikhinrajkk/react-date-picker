@@ -29,7 +29,8 @@ class DatePicker extends Component {
       selectedDate: '',
       selectedDay: 0,
       selectedMonth: 0,
-      selectedYear: 0
+      selectedYear: 0,
+      showPlaceHolder: true
     };
   }
 
@@ -119,6 +120,9 @@ class DatePicker extends Component {
       selectedDay: day,
       selectedDate: date
     });
+    this.setState({
+      showPlaceHolder: false
+    });
     this.hidePopup();
     this.props.onDateSelect(this.formatDate(day, selectedMonth, selectedYear));
   };
@@ -132,7 +136,8 @@ class DatePicker extends Component {
         selectedMonth: monthIndex,
         selectedDate: `${selectedDay}/${monthIndex + 1}/${selectedYear}`,
         showMonthPicker: false,
-        showPopup: false
+        showPopup: false,
+        showPlaceHolder: false
       });
     } else {
       this.setState({
@@ -321,7 +326,8 @@ class DatePicker extends Component {
       selectedDay,
       selectedMonth,
       selectedYear,
-      showPopup
+      showPopup,
+      showPlaceHolder
     } = this.state;
 
     const {
@@ -330,6 +336,7 @@ class DatePicker extends Component {
       input = false,
       iconPosition = 'right',
       monthSelector = false,
+      placeHolder
     } = this.props;
 
 
@@ -344,7 +351,7 @@ class DatePicker extends Component {
           ? (
             <input
               type="text"
-              value={this.formatDate(selectedDay, selectedMonth, selectedYear)}
+              value={(placeHolder === '' || !showPlaceHolder) ? this.formatDate(selectedDay, selectedMonth, selectedYear) : placeHolder}
               onClick={() => this.hidePopup()}
               style={selectorStyle}
               className="date-picker-selector"
@@ -356,7 +363,7 @@ class DatePicker extends Component {
               onClick={() => this.hidePopup()}
               role="presentation"
             >
-              {this.formatDate(selectedDay, selectedMonth, selectedYear)}
+              {(placeHolder === '' || !showPlaceHolder) ? this.formatDate(selectedDay, selectedMonth, selectedYear) : placeHolder}
               {iconURL
                 && (
                   <img src={this.props.iconURL} alt="icon" style={iconStyle} />
@@ -421,7 +428,8 @@ DatePicker.propTypes = {
   monthSelector: PropTypes.bool,
   monthSelector: PropTypes.bool,
   seperator: PropTypes.string,
-  dateFormat: PropTypes.string
+  dateFormat: PropTypes.string,
+  placeHolder: PropTypes.string
 };
 
 DatePicker.defaultProps = {
@@ -434,7 +442,8 @@ DatePicker.defaultProps = {
   monthSelector: false,
   monthSelector: false,
   seperator: '/',
-  dateFormat: 'DD/MM/YYYY'
+  dateFormat: 'DD/MM/YYYY',
+  placeHolder: ''
 };
 
 export default DatePicker;

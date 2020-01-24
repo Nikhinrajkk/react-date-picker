@@ -4,7 +4,7 @@ import DatePicker from './js/date-picker';
 
 import './styles.css';
 
-const renderDatePickerExample = (title, date, seperator, format, input, monthPicker, color, iconURL, iconPosition, selectorStyle) => {
+const renderDatePickerExample = (title, date, seperator, format, input, monthPicker, color, iconURL, iconPosition, selectorStyle, placeHolder) => {
   const style = {
     backgroundColor: 'gray',
     color: 'white',
@@ -33,6 +33,7 @@ const renderDatePickerExample = (title, date, seperator, format, input, monthPic
           {selectorStyle && <div className="css-param">{`color: 'white'`}</div>}
           {selectorStyle && <div className="css-param">{`fontWeight: 600`}</div>}
           {selectorStyle && <div className="code-param">{`}}`}</div>}
+          {placeHolder && <div className="code-param">{`placeHolder=${placeHolder }`}</div>}
           <div>{`/>`}</div>
         </div>
       </div>
@@ -41,6 +42,7 @@ const renderDatePickerExample = (title, date, seperator, format, input, monthPic
           input={input}
           date={date ? date : null}
           dateFormat={format ? format : "DDMMYYYY"}
+          placeHolder={placeHolder ? placeHolder : ''}
           monthSelector={monthPicker}
           seperator={seperator ? "-" : "/"}
           color={color ? color : '#1CA6D9'}
@@ -101,6 +103,7 @@ class MyApp extends Component {
           {renderDatePickerExample("With custom icon", false, false, false, false, false, false, true)}
           {renderDatePickerExample("With icon at left position", false, false, false, false, false, false, true, "left")}
           {renderDatePickerExample("With custom styles for Button / Input selector", false, false, false, false, false, false, false, false, true)}
+          {renderDatePickerExample("With place holder", false, false, false, false, false, false, false, false, false, 'Please select date.')}
         </div>
 
       </div >
