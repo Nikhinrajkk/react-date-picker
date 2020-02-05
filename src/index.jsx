@@ -4,7 +4,7 @@ import DatePicker from './js/date-picker';
 
 import './styles.css';
 
-const renderDatePickerExample = (title, date, seperator, format, input, monthPicker, color, iconURL, iconPosition, selectorStyle, placeHolder) => {
+const renderDatePickerExample = (title, date, seperator, format, input, monthPicker, color, iconURL, iconPosition, selectorStyle, placeHolder, disabled) => {
   const style = {
     backgroundColor: 'gray',
     color: 'white',
@@ -34,6 +34,8 @@ const renderDatePickerExample = (title, date, seperator, format, input, monthPic
           {selectorStyle && <div className="css-param">{`fontWeight: 600`}</div>}
           {selectorStyle && <div className="code-param">{`}}`}</div>}
           {placeHolder && <div className="code-param">{`placeHolder=${placeHolder }`}</div>}
+          {disabled && <div className="code-param">{`disabled=${disabled}`}</div>}
+
           <div>{`/>`}</div>
         </div>
       </div>
@@ -49,6 +51,7 @@ const renderDatePickerExample = (title, date, seperator, format, input, monthPic
           iconURL={iconURL ? "assets/calendar.svg" : ''}
           iconPosition={iconPosition ? "left" : "right"}
           selectorStyle={selectorStyle ? style : {}}
+          disabled={disabled}
         />
       </div>
     </div>
@@ -104,6 +107,9 @@ class MyApp extends Component {
           {renderDatePickerExample("With icon at left position", false, false, false, false, false, false, true, "left")}
           {renderDatePickerExample("With custom styles for Button / Input selector", false, false, false, false, false, false, false, false, true)}
           {renderDatePickerExample("With place holder", false, false, false, false, false, false, false, false, false, 'Please select date.')}
+          {renderDatePickerExample("Disabled", false, false, false, false, false, false, false, false, false, '', true)}
+          {renderDatePickerExample("Disabled with place holder", false, false, false, false, false, false, false, false, false, 'Place Holder', true)}
+
         </div>
 
       </div >

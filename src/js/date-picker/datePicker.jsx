@@ -30,8 +30,11 @@ class DatePicker extends Component {
       selectedDay: 0,
       selectedMonth: 0,
       selectedYear: 0,
-      showPlaceHolder: true
+      showPlaceHolder: true,
+      blured: false
     };
+
+    this.datePicker = React.createRef();
   }
 
   componentDidMount = () => {
@@ -57,14 +60,27 @@ class DatePicker extends Component {
 
   daysInMonth = (month, year) => 32 - new Date(year, month, 32).getDate();
 
-  hidePopup = () => {
-    const { showPopup } = this.state;
+
+  togglePopup = () => {
+    const { showPopup, blured } = this.state;
+    if (!blured) {
+      this.setState({
+        showPopup: !showPopup,
+        showDatePicker: true,
+        showMonthPicker: false,
+        showYearPicker: false
+      }, () => { if (!showPopup) { this.datePicker.current.focus(); } });
+    }
     this.setState({
-      showPopup: !showPopup,
-      showDatePicker: true,
-      showMonthPicker: false,
-      showYearPicker: false
+      blured: false
     });
+  };
+
+  onBlur = () => {
+    this.setState({
+      showPopup: false,
+      blured: true
+    }, () => setTimeout(() => this.setState({ blured: false }), 100));
   };
 
   formatDateDigit = (digit) => digit < 10 ? `0${digit}` : digit;
@@ -114,17 +130,19 @@ class DatePicker extends Component {
   onDateSelect = (evt) => {
     const { selectedMonth, selectedYear } = this.state;
     const day = parseInt(evt.target.innerText, 10);
-    const date = `${day}/${selectedMonth + 1}/${selectedYear}`;
+    if (day) {
+      const date = `${day}/${selectedMonth + 1}/${selectedYear}`;
 
-    this.setState({
-      selectedDay: day,
-      selectedDate: date
-    });
-    this.setState({
-      showPlaceHolder: false
-    });
-    this.hidePopup();
-    this.props.onDateSelect(this.formatDate(day, selectedMonth, selectedYear));
+      this.setState({
+        selectedDay: day,
+        selectedDate: date
+      });
+      this.setState({
+        showPlaceHolder: false
+      });
+      this.togglePopup();
+      this.props.onDateSelect(this.formatDate(day, selectedMonth, selectedYear));
+    }
   };
 
   onMonthSelect = (evt) => {
@@ -336,7 +354,8 @@ class DatePicker extends Component {
       input = false,
       iconPosition = 'right',
       monthSelector = false,
-      placeHolder
+      placeHolder,
+      disabled
     } = this.props;
 
 
@@ -352,15 +371,15 @@ class DatePicker extends Component {
             <input
               type="text"
               value={(placeHolder === '' || !showPlaceHolder) ? this.formatDate(selectedDay, selectedMonth, selectedYear) : placeHolder}
-              onClick={() => this.hidePopup()}
-              style={selectorStyle}
+              onClick={!disabled ? () => this.togglePopup() : undefined}
+              style={{ ...selectorStyle, opacity: disabled? 0.5 : 1 }}
               className="date-picker-selector"
             />)
           : (
             <div
               className="date-picker-selector"
-              style={{ cursor: 'pointer', ...selectorStyle, ...iconPositionStyle }}
-              onClick={() => this.hidePopup()}
+              style={{ cursor: 'pointer', ...selectorStyle, ...iconPositionStyle, opacity: disabled? 0.5 : 1 }}
+              onClick={!disabled ? () => this.togglePopup() : undefined}
               role="presentation"
             >
               {(placeHolder === '' || !showPlaceHolder) ? this.formatDate(selectedDay, selectedMonth, selectedYear) : placeHolder}
@@ -373,7 +392,11 @@ class DatePicker extends Component {
 
         {showPopup
           && (
-            <div>
+            <div
+              tabIndex="-1"
+              onBlur={this.onBlur}
+              ref={this.datePicker}
+            >
               <div className="date-picker-popup">
                 <div className="arrow-up">
                   <div className="inner-triangle" />
@@ -429,7 +452,8 @@ DatePicker.propTypes = {
   monthSelector: PropTypes.bool,
   seperator: PropTypes.string,
   dateFormat: PropTypes.string,
-  placeHolder: PropTypes.string
+  placeHolder: PropTypes.string,
+  disabled: PropTypes.bool
 };
 
 DatePicker.defaultProps = {
@@ -443,7 +467,8 @@ DatePicker.defaultProps = {
   monthSelector: false,
   seperator: '/',
   dateFormat: 'DD/MM/YYYY',
-  placeHolder: ''
+  placeHolder: '',
+  disabled: false
 };
 
 export default DatePicker;
