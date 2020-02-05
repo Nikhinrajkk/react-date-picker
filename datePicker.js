@@ -14,8 +14,8 @@ class DatePicker extends Component {
     this.componentDidMount = () => {
       let currentDate = new Date();
 
-      if (this.props.defaultDate) {
-        const splitDate = this.props.defaultDate.split('/');
+      if (this.props.date) {
+        const splitDate = this.props.date.split('/');
         const stdDateFormat = `${splitDate[1]}/${splitDate[0]}/${splitDate[2]}`;
         currentDate = new Date(stdDateFormat);
       }
@@ -25,7 +25,7 @@ class DatePicker extends Component {
       const year = currentDate.getFullYear();
 
       this.setState({
-        selectedDate: this.props.defaultDate ? this.props.defaultDate : `${day}/${month + 1}/${year}`,
+        selectedDate: this.props.date ? this.props.date : `${day}/${month + 1}/${year}`,
         selectedDay: day,
         selectedMonth: month,
         selectedYear: year
@@ -34,28 +34,90 @@ class DatePicker extends Component {
 
     this.daysInMonth = (month, year) => 32 - new Date(year, month, 32).getDate();
 
-    this.hidePopup = () => {
-      const { showPopup } = this.state;
+    this.togglePopup = () => {
+      const { showPopup, blured } = this.state;
+      if (!blured) {
+        this.setState({
+          showPopup: !showPopup,
+          showDatePicker: true,
+          showMonthPicker: false,
+          showYearPicker: false
+        }, () => {
+          if (!showPopup) {
+            this.datePicker.current.focus();
+          }
+        });
+      }
       this.setState({
-        showPopup: !showPopup,
-        showDatePicker: true,
-        showMonthPicker: false,
-        showYearPicker: false
+        blured: false
       });
+    };
+
+    this.onBlur = () => {
+      this.setState({
+        showPopup: false,
+        blured: true
+      }, () => setTimeout(() => this.setState({ blured: false }), 100));
+    };
+
+    this.formatDateDigit = digit => digit < 10 ? `0${digit}` : digit;
+
+    this.formatDate = (day, month, year) => {
+      const { seperator, monthSelector, dateFormat } = this.props;
+      if (monthSelector) {
+        switch (dateFormat) {
+          case 'MMYYYY':
+            return `${this.formatDateDigit(month + 1)}${seperator}${year}`;
+          case 'YYYYMM':
+            return `${year}${seperator}${this.formatDateDigit(month + 1)}`;
+          case 'MM':
+            return `${this.formatDateDigit(month + 1)}`;
+          case 'YYYYMon':
+            return `${year}${seperator}${monthArray[month].substring(0, 3)}`;
+          case 'Mon':
+            return monthArray[month].substring(0, 3);
+          case 'Month':
+            return monthArray[month];
+          default:
+            return `${monthArray[month].substring(0, 3)}${seperator}${year}`;
+        }
+      }
+
+      switch (dateFormat) {
+        case 'DDMonYYYY':
+          return `${this.formatDateDigit(day)}${seperator}${monthArray[month].substring(0, 3)}${seperator}${year}`;
+        case 'YYYYMonDD':
+          return `${year}${seperator}${monthArray[month].substring(0, 3)}${seperator}${this.formatDateDigit(day)}`;
+        case 'DDMonthYYYY':
+          return `${this.formatDateDigit(day)}${seperator}${monthArray[month]}${seperator}${year}`;
+        case 'YYYYMonthDD':
+          return `${year}${seperator}${monthArray[month]}${seperator}${this.formatDateDigit(day)}`;
+        case 'DDMMYY':
+          return `${this.formatDateDigit(day)}${seperator}${this.formatDateDigit(month + 1)}${seperator}${`${year}`.substring(2, 4)}`;
+        case 'YYMMDD':
+          return `${`${year}`.substring(2, 4)}${seperator}${this.formatDateDigit(month + 1)}${seperator}${this.formatDateDigit(day)}`;
+        case 'YYYYMMDD':
+          return `${year}${seperator}${this.formatDateDigit(month + 1)}${seperator}${this.formatDateDigit(day)}`;
+        default:
+          return `${this.formatDateDigit(day)}${seperator}${this.formatDateDigit(month + 1)}${seperator}${year}`;
+      }
     };
 
     this.onDateSelect = evt => {
       const { selectedMonth, selectedYear } = this.state;
       const day = parseInt(evt.target.innerText, 10);
-      const date = `${day}/${selectedMonth + 1}/${selectedYear}`;
+      if (day) {
+        const date = `${day}/${selectedMonth + 1}/${selectedYear}`;
 
-      this.setState({
-        selectedDay: day,
-        selectedDate: date
-      });
-      this.hidePopup();
-      if (this.props.onDateSelect) {
-        this.props.onDateSelect(date);
+        this.setState({
+          selectedDay: day,
+          selectedDate: date
+        });
+        this.setState({
+          showPlaceHolder: false
+        });
+        this.togglePopup();
+        this.props.onDateSelect(this.formatDate(day, selectedMonth, selectedYear));
       }
     };
 
@@ -63,12 +125,22 @@ class DatePicker extends Component {
       const { selectedDay, selectedYear } = this.state;
       const month = evt.target.innerText;
       const monthIndex = monthArray.findIndex(item => item.includes(month));
-      this.setState({
-        selectedMonth: monthIndex,
-        selectedDate: `${selectedDay}/${monthIndex + 1}/${selectedYear}`,
-        showMonthPicker: false,
-        showDatePicker: true
-      });
+      if (this.props.monthSelector) {
+        this.setState({
+          selectedMonth: monthIndex,
+          selectedDate: `${selectedDay}/${monthIndex + 1}/${selectedYear}`,
+          showMonthPicker: false,
+          showPopup: false,
+          showPlaceHolder: false
+        });
+      } else {
+        this.setState({
+          selectedMonth: monthIndex,
+          selectedDate: `${selectedDay}/${monthIndex + 1}/${selectedYear}`,
+          showMonthPicker: false,
+          showDatePicker: true
+        });
+      }
     };
 
     this.onYearSelect = evt => {
@@ -83,34 +155,44 @@ class DatePicker extends Component {
       });
     };
 
-    this.onPrevMonthClick = () => {
-      const { selectedMonth, selectedYear } = this.state;
+    this.onPrevClick = () => {
+      const { selectedMonth, selectedYear, showYearPicker } = this.state;
       let month = 0;
       let year = selectedYear;
 
-      if (selectedMonth === 0) {
-        month = 11;
-        year = selectedYear - 1;
+      if (showYearPicker) {
+        year -= 1;
       } else {
-        month = selectedMonth - 1;
+        if (selectedMonth === 0) {
+          month = 11;
+          year = selectedYear - 1;
+        } else {
+          month = selectedMonth - 1;
+        }
       }
+
       this.setState({
         selectedYear: year,
         selectedMonth: month
       });
     };
 
-    this.onNextMonthClick = () => {
-      const { selectedMonth, selectedYear } = this.state;
+    this.onNextClick = () => {
+      const { selectedMonth, selectedYear, showYearPicker } = this.state;
       let month = 0;
       let year = selectedYear;
 
-      if (selectedMonth === 11) {
-        month = 0;
-        year = selectedYear + 1;
+      if (showYearPicker) {
+        year += 1;
       } else {
-        month = selectedMonth + 1;
+        if (selectedMonth === 11) {
+          month = 0;
+          year = selectedYear + 1;
+        } else {
+          month = selectedMonth + 1;
+        }
       }
+
       this.setState({
         selectedYear: year,
         selectedMonth: month
@@ -118,11 +200,13 @@ class DatePicker extends Component {
     };
 
     this.onMonthPickerSelect = () => {
-      this.setState({
-        showYearPicker: false,
-        showMonthPicker: true,
-        showDatePicker: false
-      });
+      if (!this.props.monthSelector) {
+        this.setState({
+          showYearPicker: false,
+          showMonthPicker: true,
+          showDatePicker: false
+        });
+      }
     };
 
     this.onYearPickerSelect = () => {
@@ -145,6 +229,118 @@ class DatePicker extends Component {
       return {};
     };
 
+    this.renderDatePicker = () => {
+      const { selectedDay, selectedMonth, selectedYear } = this.state;
+
+      const monthDays = this.daysInMonth(selectedMonth, selectedYear);
+      const startDay = new Date(`${selectedMonth + 1}/1/${selectedYear}`).getDay();
+      let dateArray = [];
+      dateArray = new Array(42).fill(null);
+      for (let index = startDay, startDate = 1; startDate <= monthDays; index += 1, startDate += 1) {
+        dateArray[index] = startDate;
+      }
+
+      return React.createElement(
+        'div',
+        null,
+        React.createElement(
+          'div',
+          { className: 'week-name-wrapper' },
+          React.createElement(
+            'div',
+            null,
+            'Su'
+          ),
+          React.createElement(
+            'div',
+            null,
+            'Mo'
+          ),
+          React.createElement(
+            'div',
+            null,
+            'Tu'
+          ),
+          React.createElement(
+            'div',
+            null,
+            'We'
+          ),
+          React.createElement(
+            'div',
+            null,
+            'Th'
+          ),
+          React.createElement(
+            'div',
+            null,
+            'Fr'
+          ),
+          React.createElement(
+            'div',
+            null,
+            'Sa'
+          )
+        ),
+        React.createElement(
+          'div',
+          { className: 'date-wrapper' },
+          dateArray.map((day, index) => React.createElement(
+            'div',
+            {
+              onClick: evt => this.onDateSelect(evt),
+              role: 'presentation',
+              key: `${index}-${day}`,
+              className: day !== null ? `date-item` : 'date-space',
+              style: day !== null ? this.getSelectionStyles(day, selectedDay) : {}
+            },
+            day
+          ))
+        )
+      );
+    };
+
+    this.renderMonthPicker = () => {
+      const { selectedMonth } = this.state;
+      return React.createElement(
+        'div',
+        { className: 'month-wrapper' },
+        monthArray.map((month, index) => React.createElement(
+          'div',
+          {
+            onClick: evt => this.onMonthSelect(evt),
+            role: 'presentation',
+            key: month,
+            className: 'month-item',
+            style: this.getSelectionStyles(index, selectedMonth)
+          },
+          month.substring(0, 3)
+        ))
+      );
+    };
+
+    this.renderYearPicker = () => {
+      const { selectedYear } = this.state;
+
+      const yearArray = Array.from(Array(12), (year = selectedYear - 5, i) => year + i);
+
+      return React.createElement(
+        'div',
+        { className: 'year-wrapper' },
+        yearArray.map(year => React.createElement(
+          'div',
+          {
+            onClick: evt => this.onYearSelect(evt),
+            role: 'presentation',
+            key: year,
+            className: 'year-item',
+            style: this.getSelectionStyles(year, selectedYear)
+          },
+          year
+        ))
+      );
+    };
+
     this.state = {
       showPopup: false,
       showDatePicker: true,
@@ -153,8 +349,12 @@ class DatePicker extends Component {
       selectedDate: '',
       selectedDay: 0,
       selectedMonth: 0,
-      selectedYear: 0
+      selectedYear: 0,
+      showPlaceHolder: true,
+      blured: false
     };
+
+    this.datePicker = React.createRef();
   }
 
   render() {
@@ -162,29 +362,22 @@ class DatePicker extends Component {
       showYearPicker,
       showMonthPicker,
       showDatePicker,
-      selectedDate,
       selectedDay,
       selectedMonth,
       selectedYear,
-      showPopup
+      showPopup,
+      showPlaceHolder
     } = this.state;
 
     const {
       iconURL,
       selectorStyle = {},
       input = false,
-      iconPosition = 'right'
+      iconPosition = 'right',
+      monthSelector = false,
+      placeHolder,
+      disabled
     } = this.props;
-
-    const monthDays = this.daysInMonth(selectedMonth, selectedYear);
-    const startDay = new Date(`${selectedMonth + 1}/1/${selectedYear}`).getDay();
-    let dateArray = [];
-    dateArray = new Array(42).fill(null);
-    for (let index = startDay, startDate = 1; startDate <= monthDays; index += 1, startDate += 1) {
-      dateArray[index] = startDate;
-    }
-
-    const yearArray = Array.from(Array(12), (year = selectedYear - 5, i) => year + i);
 
     const iconPositionStyle = iconPosition === 'left' ? { flexDirection: 'row-reverse' } : {};
     const iconStyle = iconPosition === 'left' ? { marginLeft: 0, marginRight: 5 } : {};
@@ -196,24 +389,28 @@ class DatePicker extends Component {
       },
       input ? React.createElement('input', {
         type: 'text',
-        value: selectedDate,
-        onClick: () => this.hidePopup(),
-        style: selectorStyle,
+        value: placeHolder === '' || !showPlaceHolder ? this.formatDate(selectedDay, selectedMonth, selectedYear) : placeHolder,
+        onClick: !disabled ? () => this.togglePopup() : undefined,
+        style: _extends({}, selectorStyle, { opacity: disabled ? 0.5 : 1 }),
         className: 'date-picker-selector'
       }) : React.createElement(
         'div',
         {
           className: 'date-picker-selector',
-          style: _extends({ cursor: 'pointer' }, selectorStyle, iconPositionStyle),
-          onClick: () => this.hidePopup(),
+          style: _extends({ cursor: 'pointer' }, selectorStyle, iconPositionStyle, { opacity: disabled ? 0.5 : 1 }),
+          onClick: !disabled ? () => this.togglePopup() : undefined,
           role: 'presentation'
         },
-        selectedDate,
+        placeHolder === '' || !showPlaceHolder ? this.formatDate(selectedDay, selectedMonth, selectedYear) : placeHolder,
         iconURL && React.createElement('img', { src: this.props.iconURL, alt: 'icon', style: iconStyle })
       ),
       showPopup && React.createElement(
         'div',
-        null,
+        {
+          tabIndex: '-1',
+          onBlur: this.onBlur,
+          ref: this.datePicker
+        },
         React.createElement(
           'div',
           { className: 'date-picker-popup' },
@@ -250,104 +447,19 @@ class DatePicker extends Component {
               { className: 'arrow-wrapper' },
               React.createElement('div', {
                 className: 'left-arrow',
-                onClick: () => this.onPrevMonthClick(),
+                onClick: () => this.onPrevClick(),
                 role: 'presentation'
               }),
               React.createElement('div', {
                 className: 'right-arrow',
-                onClick: () => this.onNextMonthClick(),
+                onClick: () => this.onNextClick(),
                 role: 'presentation'
               })
             )
           ),
-          showDatePicker && React.createElement(
-            'div',
-            null,
-            React.createElement(
-              'div',
-              { className: 'week-name-wrapper' },
-              React.createElement(
-                'div',
-                null,
-                'Su'
-              ),
-              React.createElement(
-                'div',
-                null,
-                'Mo'
-              ),
-              React.createElement(
-                'div',
-                null,
-                'Tu'
-              ),
-              React.createElement(
-                'div',
-                null,
-                'We'
-              ),
-              React.createElement(
-                'div',
-                null,
-                'Th'
-              ),
-              React.createElement(
-                'div',
-                null,
-                'Fr'
-              ),
-              React.createElement(
-                'div',
-                null,
-                'Sa'
-              )
-            ),
-            React.createElement(
-              'div',
-              { className: 'date-wrapper' },
-              dateArray.map((day, index) => React.createElement(
-                'div',
-                {
-                  onClick: evt => this.onDateSelect(evt),
-                  role: 'presentation',
-                  key: `${index}-${day}`,
-                  className: day !== null ? `date-item` : 'date-space',
-                  style: day !== null ? this.getSelectionStyles(day, selectedDay) : {}
-                },
-                day
-              ))
-            )
-          ),
-          showMonthPicker && React.createElement(
-            'div',
-            { className: 'month-wrapper' },
-            monthArray.map((month, index) => React.createElement(
-              'div',
-              {
-                onClick: evt => this.onMonthSelect(evt),
-                role: 'presentation',
-                key: month,
-                className: 'month-item',
-                style: this.getSelectionStyles(index, selectedMonth)
-              },
-              month.substring(0, 3)
-            ))
-          ),
-          showYearPicker && React.createElement(
-            'div',
-            { className: 'year-wrapper' },
-            yearArray.map(year => React.createElement(
-              'div',
-              {
-                onClick: evt => this.onYearSelect(evt),
-                role: 'presentation',
-                key: year,
-                className: 'year-item',
-                style: this.getSelectionStyles(year, selectedYear)
-              },
-              year
-            ))
-          )
+          showDatePicker && !monthSelector && this.renderDatePicker(),
+          (showMonthPicker || !showYearPicker && monthSelector) && this.renderMonthPicker(),
+          showYearPicker && this.renderYearPicker()
         )
       )
     );
@@ -355,11 +467,33 @@ class DatePicker extends Component {
 }
 
 DatePicker.propTypes = {
-  defaultDate: PropTypes.string
+  onDateSelect: PropTypes.func,
+  defaultDate: PropTypes.string,
+  input: PropTypes.bool,
+  iconURL: PropTypes.string,
+  selectorStyle: PropTypes.shape(),
+  iconPosition: PropTypes.string,
+  monthSelector: PropTypes.bool,
+  monthSelector: PropTypes.bool,
+  seperator: PropTypes.string,
+  dateFormat: PropTypes.string,
+  placeHolder: PropTypes.string,
+  disabled: PropTypes.bool
 };
 
 DatePicker.defaultProps = {
-  defaultDate: ''
+  onDateSelect: () => {},
+  defaultDate: '',
+  input: false,
+  iconURL: null,
+  selectorStyle: {},
+  iconPosition: 'right',
+  monthSelector: false,
+  monthSelector: false,
+  seperator: '/',
+  dateFormat: 'DD/MM/YYYY',
+  placeHolder: '',
+  disabled: false
 };
 
 export default DatePicker;
