@@ -58,6 +58,34 @@ class DatePicker extends Component {
     });
   }
 
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { selectedDay, selectedMonth, selectedYear, selectedDate } = prevState;
+    let currentDate = new Date(selectedDate);
+
+    if (nextProps.date && nextProps.date !== selectedDate) {
+      const splitDate = nextProps.date.split('/');
+      const stdDateFormat = `${splitDate[1]}/${splitDate[0]}/${splitDate[2]}`;
+      currentDate = new Date(stdDateFormat);
+
+      const month = currentDate.getMonth() ;
+      const day = currentDate.getDate();
+      const year = currentDate.getFullYear();
+
+      if (selectedDay !== day || selectedMonth !== month + 1 || selectedYear || year) {
+        return {
+          ...prevState,
+          selectedDate: `${day}/${month + 1}/${year}`,
+          selectedDay: day,
+          selectedMonth: month,
+          selectedYear: year
+        };
+      } else {
+        return null;
+      }
+    }
+  }
+
   daysInMonth = (month, year) => 32 - new Date(year, month, 32).getDate();
 
 
@@ -372,13 +400,13 @@ class DatePicker extends Component {
               type="text"
               value={(placeHolder === '' || !showPlaceHolder) ? this.formatDate(selectedDay, selectedMonth, selectedYear) : placeHolder}
               onClick={!disabled ? () => this.togglePopup() : undefined}
-              style={{ ...selectorStyle, opacity: disabled? 0.5 : 1 }}
+              style={{ ...selectorStyle, opacity: disabled ? 0.5 : 1 }}
               className="date-picker-selector"
             />)
           : (
             <div
               className="date-picker-selector"
-              style={{ cursor: 'pointer', ...selectorStyle, ...iconPositionStyle, opacity: disabled? 0.5 : 1 }}
+              style={{ cursor: 'pointer', ...selectorStyle, ...iconPositionStyle, opacity: disabled ? 0.5 : 1 }}
               onClick={!disabled ? () => this.togglePopup() : undefined}
               role="presentation"
             >
